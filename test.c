@@ -256,14 +256,14 @@ void test_motor(void) {
     // Enable standby pin
     GPIOA->ODR |= STDBY_PIN;
 
-    // Run motor A forward at 50% speed for 3 seconds
+    // Run motor A forward at 50% speed for 1 seconds
     motor_a_set_speed_dir(50, 1);
     delay_timer_ms(1000);
 
     // Stop motor A
     motor_a_set_speed_dir(0, 1);
 
-    // Run motor A backward at 50% speed for 3 seconds
+    // Run motor A backward at 50% speed for 1 seconds
     motor_a_set_speed_dir(50, 0);
     delay_timer_ms(1000);
 
@@ -287,14 +287,14 @@ void test_pump(void) {
     // Enable standby pin
     GPIOA->ODR |= STDBY_PIN;
 
-    // Run pump (Motor B) forward at 70% speed for 3 seconds
+    // Run pump (Motor B) forward at 70% speed for 1 seconds
     motor_b_set_speed_dir(70, 1);
     delay_timer_ms(1000);
 
     // Stop pump
     motor_b_set_speed_dir(0, 1);
 
-    // Run pump backward at 70% speed for 3 seconds
+    // Run pump backward at 70% speed for 1 seconds
     motor_b_set_speed_dir(70, 0);
     delay_timer_ms(1000);
 
@@ -420,7 +420,7 @@ void test_uart_communication(void) {
     lcd_string("Sending...");
 
     // Send test message
-    uart3_send_string("STM32 Test Mode Active\r\n");
+    uart3_send_string("Welcome\r\n");
 
     delay_timer_ms(1000);
 
@@ -431,7 +431,7 @@ void test_uart_communication(void) {
     uint32_t start_time = ms_counter;
     char received = 0;
 
-    while ((ms_counter - start_time) < 3000) {  // 3 second timeout
+    while ((ms_counter - start_time) < 1000) {  // 3 second timeout
         if (USART3->SR & USART_SR_RXNE) {
             received = uart3_receive_char();
             break;
@@ -474,6 +474,7 @@ char uart3_receive_char(void) {
 }
 
 // Display test result
+
 void display_test_result(const char* test_name, test_result_t result) {
     lcd(0x01, 0);
     lcd_string((char*)test_name);
@@ -491,7 +492,7 @@ void display_test_result(const char* test_name, test_result_t result) {
             break;
     }
 
-    delay_timer_ms(2000);
+    delay_timer_ms(1000);
 }
 
 // Main test mode function
@@ -504,7 +505,7 @@ void test_mode_run(void) {
 
     lcd(0x01, 0);
     lcd_string("Test Mode Start");
-    delay_timer_ms(2000);
+    delay_timer_ms(1000);
 
     // Run all tests in sequence
     test_buzzer();
