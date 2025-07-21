@@ -1,7 +1,7 @@
 #include "stm32f4xx.h"
 #include "lcd.h"
 #include "test.h"
-
+#include <stdint.h>
 // External variables from secq.c
 extern volatile uint32_t ms_counter;
 extern void delay_timer_ms(uint32_t ms);
@@ -204,7 +204,7 @@ void test_uart_init(void) {
     // Configure USART3
     USART3->BRR = 0X683;   // Baud rate setting (9600 @16MHz)
     USART3->CR1 |= (1 << 3);  // Enable Transmitter
-    USART3->CR1 |= (1 << 2);  // Enable Receiver
+   USART3->CR1 |= (1 << 2);  // Enable Receiver
     USART3->CR2 = 0;
     USART3->CR3 = 0;
     USART3->CR1 |= (1 << 13); // Enable USART3
@@ -405,7 +405,7 @@ void test_gas_sensor(void) {
         lcd('V', 1);
         lcd_string("    ");
 
-        delay_timer_ms(500);
+        delay_timer_ms(100);
     }
 
     display_test_result("Gas Sensor", TEST_PASS);
@@ -419,26 +419,26 @@ void test_uart_communication(void) {
     lcd(0xC0, 0);
     lcd_string("Sending...");
 
-    // Send test message
+    // Send message
     uart3_send_string("Welcome\r\n");
 
-    delay_timer_ms(1000);
+    delay_timer_ms(500);  // Give slave time to process
 
     lcd(0xC0, 0);
     lcd_string("Waiting...");
 
-    // Try to receive response
+    // Wait for slave ACK
     uint32_t start_time = ms_counter;
     char received = 0;
 
-    while ((ms_counter - start_time) < 1000) {  // 3 second timeout
+    while ((ms_counter - start_time) < 1000) {  // 1s timeout
         if (USART3->SR & USART_SR_RXNE) {
             received = uart3_receive_char();
             break;
         }
     }
 
-    if (received) {
+    if (received == 'A') {  // Only consider 'A' as valid ACK
         display_test_result("UART Comm", TEST_PASS);
     } else {
         display_test_result("UART Comm", TEST_TIMEOUT);
@@ -446,6 +446,7 @@ void test_uart_communication(void) {
 
     delay_timer_ms(1000);
 }
+
 
 // Read ADC value
 uint16_t read_adc(void) {
@@ -508,6 +509,7 @@ void test_mode_run(void) {
     delay_timer_ms(1000);
 
     // Run all tests in sequence
+
     test_buzzer();
     test_leds();
     test_motor();
@@ -516,6 +518,7 @@ void test_mode_run(void) {
     test_smoke_switch();
     test_gas_sensor();
     test_uart_communication();
+
 
     // Display final results
     lcd(0x01, 0);
