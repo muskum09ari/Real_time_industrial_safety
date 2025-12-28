@@ -1,7 +1,7 @@
 # Real_time_industrial_safety
 # 
 
-A security authentication system built on the STM32F4xx microcontroller platform. This project implements a passcode-based access control system with LCD display feedback and button input interface.
+A security authentication system built on the STM32F405RGTX microcontroller platform. This project implements a passcode-based access control system with LCD display feedback and button input interface.
 
 ## Overview
 
